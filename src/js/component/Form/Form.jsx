@@ -1,29 +1,49 @@
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
-function Form({ list, setList }) {
+function Form({ tareaApi, setTareaApi }) {
 	const [task, setTask] = useState("");
 
-	const generarID = () => {
-		const random = Math.random().toString(36).substring(2);
-		const fecha = Date.now().toString(36);
+	//API ACTUALIZAR LISTA DE TAREAS
 
-		return fecha + random;
+	const updateUser = (data) => {
+		fetch(`https://assets.breatheco.de/apis/fake/todos/user/franespinosa`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		})
+			.then((res) => {
+				console.log({ status: res.status });
+				return res.json();
+			})
+			.then((res) => {
+				console.log(res);
+			})
+			.catch((err) => {
+				console.log({ err });
+			});
 	};
 
 	//FUNCION INTRO TAREA
 	function handleSubmit(e) {
 		e.preventDefault();
 		if (task !== "") {
+			//objeto con tarea nueva
 			const object = {
-				task: task,
-				id: generarID(),
+				label: task,
+				done: false,
+				//id: generarID(),
 			};
+			setTareaApi([...tareaApi, object]);
+			const sumaTareas = [...tareaApi, object];
 
-			setList([...list, object]);
+			updateUser(sumaTareas);
+
+			//setList([...list, object]);
 			setTask("");
-
-			console.log(object);
 		}
 	}
 
